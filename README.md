@@ -173,102 +173,117 @@ Below is a complete example of a simple Flutter chat app using Firebase Firestor
   ```
 ---
 <h5> 5: Create the chat screen with real-time messaging: chat_screen.dart <h5>
-  
-  ```
-  import 'package:flutter/material.dart';
-  import 'package:cloud_firestore/cloud_firestore.dart';
-  import 'auth_service.dart';
-  import 'package:provider/provider.dart';
-  
-  class ChatScreen extends StatelessWidget {
-    final TextEditingController _messageController = TextEditingController();
-    final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
-    @override
-    Widget build(BuildContext context) {
-      final authService = Provider.of<AuthService>(context);
-      final user = authService.user;
-  
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Chat App'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: () async {
-                await authService.signOut();
+   
+```
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'auth_service.dart';
+import 'package:provider/provider.dart';
+
+class ChatScreen extends StatelessWidget {
+  final TextEditingController _messageController = TextEditingController();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  ChatScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    final userStream = authService.user;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Chat App'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await authService.signOut();
+            },
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Expanded(
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _firestore
+                  .collection('messages')
+                  .orderBy('timestamp', descending: false)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                final messages = snapshot.data!.docs;
+                List<Widget> messageWidgets = [];
+                for (var message in messages) {
+                  final messageText = message['text'];
+                  final messageSender = message['sender'];
+
+                  final messageWidget = ListTile(
+                    title: Text(messageText),
+                    subtitle: Text(messageSender),
+                  );
+                  messageWidgets.add(messageWidget);
+                }
+
+                return ListView(
+                  children: messageWidgets,
+                );
               },
             ),
-          ],
-        ),
-        body: Column(
-          children: [
-            Expanded(
-              child: StreamBuilder<QuerySnapshot>(
-                stream: _firestore
-                    .collection('messages')
-                    .orderBy('timestamp', descending: false)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (!snapshot.hasData) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-  
-                  final messages = snapshot.data!.docs;
-                  List<Widget> messageWidgets = [];
-                  for (var message in messages) {
-                    final messageText = message['text'];
-                    final messageSender = message['sender'];
-  
-                    final messageWidget = ListTile(
-                      title: Text(messageText),
-                      subtitle: Text(messageSender),
-                    );
-                    messageWidgets.add(messageWidget);
-                  }
-  
-                  return ListView(
-                    children: messageWidgets,
-                  );
-                },
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: InputDecoration(
-                        hintText: 'Enter your message...',
-                      ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _messageController,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter your message...',
                     ),
                   ),
-                  IconButton(
-                    icon: Icon(Icons.send),
-                    onPressed: () async {
-                      if (_messageController.text.isNotEmpty) {
-                        await _firestore.collection('messages').add({
-                          'text': _messageController.text,
-                          'sender': user!.email,
-                          'timestamp': FieldValue.serverTimestamp(),
-                        });
-                        _messageController.clear();
-                      }
-                    },
-                  ),
-                ],
-              ),
+                ),
+                StreamBuilder<User?>(
+                  stream: userStream,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return const IconButton(
+                        icon: Icon(Icons.send),
+                        onPressed: null,
+                      );
+                    }
+                    final user = snapshot.data;
+                    return IconButton(
+                      icon: const Icon(Icons.send),
+                      onPressed: () async {
+                        if (_messageController.text.isNotEmpty) {
+                          await _firestore.collection('messages').add({
+                            'text': _messageController.text,
+                            'sender': user!.email,
+                            'timestamp': FieldValue.serverTimestamp(),
+                          });
+                          _messageController.clear();
+                        }
+                      },
+                    );
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-      );
-    }
+          ),
+        ],
+      ),
+    );
   }
-  ```
+}
+```
 ---
 
 ## Connect
