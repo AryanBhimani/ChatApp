@@ -18,61 +18,68 @@ Below is a complete example of a simple Flutter chat app using Firebase Firestor
 ---
 <h5> 2: Set up Firebase and the main app structure: main.dart<h5>
   
-  ```
-    import 'package:flutter/material.dart';
-    import 'package:firebase_core/firebase_core.dart';
-    import 'package:provider/provider.dart';
-    import 'auth_service.dart';
-    import 'chat_screen.dart';
-    
-    void main() async {
-      WidgetsFlutterBinding.ensureInitialized();
-      await Firebase.initializeApp();
-      runApp(MyApp());
-    }
-    
-    class MyApp extends StatelessWidget {
-      @override
-      Widget build(BuildContext context) {
-        return MultiProvider(
-          providers: [
-            Provider<AuthService>(
-              create: (_) => AuthService(),
+```
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:foodiesapp/new/auth_service.dart';
+import 'package:foodiesapp/new/chat_screen.dart';
+import 'package:foodiesapp/new/login_screen.dart';
+import 'package:provider/provider.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
+      providers: [
+        Provider<AuthService>(
+          create: (_) => AuthService(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Chat App',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const AuthWrapper(),
+      ),
+    );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+    return StreamBuilder<User?>(
+      stream: authService.user,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          final user = snapshot.data;
+          return user == null ? LoginScreen() : ChatScreen();
+        } else {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
             ),
-          ],
-          child: MaterialApp(
-            title: 'Flutter Chat App',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
-            home: AuthWrapper(),
-          ),
-        );
-      }
-    }
-    
-    class AuthWrapper extends StatelessWidget {
-      @override
-      Widget build(BuildContext context) {
-        final authService = Provider.of<AuthService>(context);
-        return StreamBuilder<User?>(
-          stream: authService.user,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.active) {
-              final user = snapshot.data;
-              return user == null ? LoginScreen() : ChatScreen();
-            } else {
-              return Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
-          },
-        );
-      }
-    }
-  ```
+          );
+        }
+      },
+    );
+  }
+}
+```
 ---
 <h5> 3: Handle user authentication:auth_service.dart<h5>
   
