@@ -83,41 +83,41 @@ class AuthWrapper extends StatelessWidget {
 ---
 <h5> 3: Handle user authentication:auth_service.dart<h5>
   
-  ```
-  import 'package:firebase_auth/firebase_auth.dart';
+```
+import 'package:firebase_auth/firebase_auth.dart';
 
-  class AuthService {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-  
-    // Stream to listen to auth state changes
-    Stream<User?> get user {
-      return _auth.authStateChanges();
-    }
-  
-    // Sign in with email and password
-    Future<void> signIn(String email, String password) async {
-      try {
-        await _auth.signInWithEmailAndPassword(email: email, password: password);
-      } catch (e) {
-        print('Error signing in: $e');
-      }
-    }
-  
-    // Sign up with email and password
-    Future<void> signUp(String email, String password) async {
-      try {
-        await _auth.createUserWithEmailAndPassword(email: email, password: password);
-      } catch (e) {
-        print('Error signing up: $e');
-      }
-    }
-  
-    // Sign out
-    Future<void> signOut() async {
-      await _auth.signOut();
+class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Stream to listen to auth state changes
+  Stream<User?> get user {
+    return _auth.authStateChanges();
+  }
+
+  // Sign in with email and password
+  Future<void> signIn(String email, String password) async {
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+    } catch (e) {
+      print('Error signing in: $e');
     }
   }
-  ```
+
+  // Sign up with email and password
+  Future<void> signUp(String email, String password) async {
+    try {
+      await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    } catch (e) {
+      print('Error signing up: $e');
+    }
+  }
+
+  // Sign out
+  Future<void> signOut() async {
+    await _auth.signOut();
+  }
+}
+```
 ---
 <h5> 4: Create a login/signup screen: login_screen.dart<h5>
   
