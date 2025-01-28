@@ -13,6 +13,7 @@ Below is a complete example of a simple Flutter chat app using Firebase Firestor
     cloud_firestore: latest_version
     provider: latest_version
   ```
+
 <h5>Run flutter pub get to install the dependencies.<h5>
   
 ---
@@ -81,6 +82,7 @@ class AuthWrapper extends StatelessWidget {
 }
 ```
 ---
+
 <h5> 3: Handle user authentication:auth_service.dart<h5>
   
 ```
@@ -119,6 +121,7 @@ class AuthService {
 }
 ```
 ---
+
 <h5> 4: Create a login/signup screen: login_screen.dart<h5>
   
 ```
@@ -181,6 +184,7 @@ class LoginScreen extends StatelessWidget {
 }
 ```
 ---
+
 <h5> 5: Create the chat screen with real-time messaging: chat_screen.dart <h5>
    
 ```
