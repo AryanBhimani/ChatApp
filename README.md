@@ -121,63 +121,65 @@ class AuthWrapper extends StatelessWidget {
 ---
 <h5> 4: Create a login/signup screen: login_screen.dart<h5>
   
-  ```
-  import 'package:flutter/material.dart';
-  import 'auth_service.dart';
-  import 'package:provider/provider.dart';
-  
-  class LoginScreen extends StatelessWidget {
-    final TextEditingController _emailController = TextEditingController();
-    final TextEditingController _passwordController = TextEditingController();
-  
-    @override
-    Widget build(BuildContext context) {
-      final authService = Provider.of<AuthService>(context);
-  
-      return Scaffold(
-        appBar: AppBar(
-          title: Text('Login / Signup'),
+```
+import 'package:flutter/material.dart';
+import 'auth_service.dart';
+import 'package:provider/provider.dart';
+
+class LoginScreen extends StatelessWidget {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  LoginScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login / Signup'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _emailController,
+              decoration: const InputDecoration(labelText: 'Email'),
+            ),
+            TextField(
+              controller: _passwordController,
+              decoration: const InputDecoration(labelText: 'Password'),
+              obscureText: true,
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                await authService.signIn(
+                  _emailController.text,
+                  _passwordController.text,
+                );
+              },
+              child: const Text('Login'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await authService.signUp(
+                  _emailController.text,
+                  _passwordController.text,
+                );
+              },
+              child: const Text('Signup'),
+            ),
+          ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(labelText: 'Email'),
-              ),
-              TextField(
-                controller: _passwordController,
-                decoration: InputDecoration(labelText: 'Password'),
-                obscureText: true,
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  await authService.signIn(
-                    _emailController.text,
-                    _passwordController.text,
-                  );
-                },
-                child: Text('Login'),
-              ),
-              ElevatedButton(
-                onPressed: () async {
-                  await authService.signUp(
-                    _emailController.text,
-                    _passwordController.text,
-                  );
-                },
-                child: Text('Signup'),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+      ),
+    );
   }
-  ```
+}
+```
 ---
 <h5> 5: Create the chat screen with real-time messaging: chat_screen.dart <h5>
    
