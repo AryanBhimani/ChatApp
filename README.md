@@ -273,9 +273,9 @@ Below is a complete example of a simple Flutter chat app using Firebase Firestor
 
 ## Connect
 
-<a href="https://dev-aryanbhimani.pantheonsite.io/" target="_blank"><img src="assets/portfolio.png" width="50" ></a>
-<a href="https://www.linkedin.com/in/aryanbhimani/" target="_blank"><img src="assets/linkedin.png" width="50"></a>
-<a href="https://x.com/aryan46022" target="_blank"><img src="assets/twitter.png" width="50"></a> 
+<a href="https://dev-aryanbhimani.pantheonsite.io/" target="_blank"><img src="portfolio.png" width="50" ></a>
+<a href="https://www.linkedin.com/in/aryanbhimani/" target="_blank"><img src="linkedin.png" width="50"></a>
+<a href="https://x.com/aryan46022" target="_blank"><img src="twitter.png" width="50"></a> 
 
 For queries or support, feel free to reach out:  
 📞 **+91 9408962204**  
